@@ -53,26 +53,30 @@
     combos {
         compatible = "zmk,combos";
         
-        // ESCAPE auf der Home Row (Linker Mittel- + Zeigefinger)
-        // Positionen basieren auf Glove80 Matrix: T(24) + S(25)
+        // 1. ESCAPE auf der Home Row (Linke Hand)
+        // Tasten: R (Ring) + T (Mittel)
+        // Glove80 Matrix Indizes: 36 und 37
         combo_esc {
-            timeout-ms = <50>;
-            key-positions = <24 25>; 
+            timeout-ms = <75>;    // Etwas erhöht auf 75ms für leichteres Auslösen
+            key-positions = <36 37>; 
             bindings = <&kp ESC>;
         };
 
-        // COLON (:) auf der Home Row (Rechter Zeige- + Mittelfinger)
-        // Positionen: H(28) + A(29) -> Shift + ;
+        // 2. COLON (:) auf der Home Row (Rechte Hand)
+        // Tasten: H (Zeige) + A (Mittel)
+        // Glove80 Matrix Indizes: 41 und 42
         combo_colon {
-            timeout-ms = <50>;
-            key-positions = <28 29>;
+            timeout-ms = <75>;
+            key-positions = <41 42>;
             bindings = <&kp COLON>;
         };
         
-        // OPTIONAL: TAB auf Linker Ring- + Mittelfinger (R+T)
+        // 3. TAB (Optional) auf Linke Hand
+        // Tasten: N (Klein) + R (Ring) -> Wenn du das willst
+        // Glove80 Matrix Indizes: 35 und 36
         combo_tab {
-            timeout-ms = <50>;
-            key-positions = <23 24>;
+            timeout-ms = <75>;
+            key-positions = <35 36>;
             bindings = <&kp TAB>;
         };
     };
