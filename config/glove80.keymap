@@ -12,13 +12,13 @@
 
 #define HYPER LC(LS(LG(LALT)))
 
-// LAYER DEFINITIONS
-#define BASE 0
+// LAYER DEFINITIONS (REORDERED FOR PRIORITY)
+#define GALLIUM 0
 #define NAV  1
 #define SYM  2
-#define MAGIC 3
-#define FACTORY_TEST 4
-#define QWERTY 5
+#define FACTORY_TEST 3
+#define QWERTY 4
+#define MAGIC 5  // MAGIC muss der höchste Layer sein!
 
 / {
     /* ---------------------------------------------------------
@@ -87,26 +87,26 @@
     };
 
     /* ---------------------------------------------------------
-       COMBOS (CORRECTED FOR GLOVE80 MATRIX)
+       COMBOS
        --------------------------------------------------------- */
     combos {
         compatible = "zmk,combos";
         
-        // ESCAPE: Linke Hand Home-Row (Mittel + Ringfinger / T+R)
+        // ESCAPE: Linke Hand Home-Row (T + R)
         combo_esc {
             timeout-ms = <75>;
             key-positions = <36 37>; 
             bindings = <&kp ESC>;
         };
 
-        // COLON (:): Rechte Hand Home-Row (Zeige + Mittelfinger / H+A)
+        // COLON (:): Rechte Hand Home-Row (H + A)
         combo_colon {
             timeout-ms = <75>;
             key-positions = <41 42>;
             bindings = <&kp COLON>;
         };
         
-        // TAB: Linke Hand Home-Row (Klein + Ringfinger / N+R)
+        // TAB: Linke Hand Home-Row (N + R)
         combo_tab {
             timeout-ms = <75>;
             key-positions = <35 36>;
@@ -120,24 +120,17 @@
     keymap {
         compatible = "zmk,keymap";
 
-        // LAYER 0: GALLIUM V2 + CALLUM MODS
+        // LAYER 0: GALLIUM V2 (Base)
         default_layer {
             display-name = "Gallium";
             bindings = <
             &kp F1         &kp F2   &kp F3   &kp F4   &kp F5                                                                                 &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
             &kp EQUAL      &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                                        &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
             
-            // GALLIUM TOP ROW
             &kp TAB        &kp B    &kp L    &kp D    &kp C    &kp V                                                                         &kp J    &kp Y    &kp O    &kp U     &kp COMMA &kp BSLH
-            
-            // GALLIUM HOME ROW
             &trans         &kp N    &kp R    &kp T    &kp S    &kp G                                                                         &kp P    &kp H    &kp A    &kp E     &kp I     &kp SQT
-            
-            // GALLIUM BOTTOM ROW (+ Upper Thumbs: Sticky Mods)
             &kp GRAVE      &kp Q    &kp X    &kp M    &kp W    &kp Z    &sk LSHFT  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
             
-            // LOWER THUMBS (Dein Wunsch-Layout)
-            // Links: Space(Nav), Del, LGUI | Rechts: RGUI, Backspace, Enter(Sym)
             &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &lt NAV SPACE &kp DEL &sk LGUI      &sk RGUI  &kp BSPC   &lt SYM RET       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
@@ -168,20 +161,7 @@
             >;
         };
 
-        // LAYER 3: MAGIC
-        magic_layer {
-            display-name = "Magic";
-            bindings = <
-            &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
-            &none         &to QWERTY       &none            &none            &none            &none                                                                               &none      &none      &none      &none      &to BASE   &none
-            &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
-            &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
-            &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
-            &none         &none            &none            &none            &none                             &bt_0      &bt_1      &out OUT_USB  &none      &none      &none                 &none      &none      &none      &none      &to FACTORY_TEST
-            >;
-        };
-
-        // LAYER 4: FACTORY TEST
+        // LAYER 3: FACTORY TEST
         factory_test_layer {
             display-name = "Test";
             bindings = <
@@ -194,7 +174,7 @@
             >;
         };
 
-        // LAYER 5: QWERTY (Gaming Mode)
+        // LAYER 4: QWERTY (Gaming)
         qwerty_layer {
             display-name = "Qwerty";
             bindings = <
@@ -204,8 +184,21 @@
             &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                         &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
             &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B    &kp LSHFT  &kp LCTRL  &kp LALT      &kp RALT  &kp RCTRL  &kp RSHFT   &kp N    &kp M    &kp COMMA &kp DOT   &kp FSLH  &kp PG_UP
             
-            // THUMBS: Standard Belegung (ohne Layer Taps, pur für Gaming)
+            // MAGIC Key muss hier funktionieren, um Layer 5 (Magic) über Layer 4 (Qwerty) zu legen!
             &magic MAGIC 0 &kp HOME &kp END &kp LEFT &kp RIGHT      &kp SPACE &kp DEL &kp LGUI      &kp RGUI  &kp BSPC   &kp RET         &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
+            >;
+        };
+
+        // LAYER 5: MAGIC (Highest Priority!)
+        magic_layer {
+            display-name = "Magic";
+            bindings = <
+            &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
+            &none         &to QWERTY       &none            &none            &none            &none                                                                               &none      &none      &none      &none      &to GALLIUM &none
+            &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
+            &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
+            &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
+            &none         &none            &none            &none            &none                             &bt_0      &bt_1      &out OUT_USB  &none      &none      &none                 &none      &none      &none      &none      &to FACTORY_TEST
             >;
         };
     };
