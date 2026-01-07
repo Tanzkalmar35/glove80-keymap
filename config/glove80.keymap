@@ -18,25 +18,24 @@
 #define SYM  2
 #define MAGIC 3
 #define FACTORY_TEST 4
+#define QWERTY 5
 
 / {
     /* ---------------------------------------------------------
-       CUSTOM BEHAVIORS & CONFIGURATION
+       CUSTOM BEHAVIORS
        --------------------------------------------------------- */
     behaviors {
-        // Sticky Key Configuration (Callum Style)
-        // Tippe Modifier kurz an, lass los, tippe Buchstaben.
+        // CALLUM STYLE STICKY KEYS
         sk: sticky_key {
             compatible = "zmk,behavior-sticky-key";
             label = "STICKY_KEY";
             #binding-cells = <1>;
             bindings = <&kp>;
-            release-after-ms = <2000>; // Modifier bleibt 2 Sek aktiv wenn nichts gedrückt wird
-            quick-release;             // Modifier löst sofort nach dem nächsten Tastendruck
-            ignore-modifiers;          // Ermöglicht Modifier-Chaining (z.B. Ctrl+Shift)
+            release-after-ms = <2000>;
+            quick-release;
+            ignore-modifiers;
         };
 
-        // Standard Magic Combo Behavior (Factory Default)
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             label = "MAGIC_HOLD_TAP";
@@ -48,41 +47,7 @@
     };
 
     /* ---------------------------------------------------------
-       COMBOS (Speed Hacks)
-       --------------------------------------------------------- */
-    combos {
-        compatible = "zmk,combos";
-        
-        // 1. ESCAPE auf der Home Row (Linke Hand)
-        // Tasten: R (Ring) + T (Mittel)
-        // Glove80 Matrix Indizes: 36 und 37
-        combo_esc {
-            timeout-ms = <75>;    // Etwas erhöht auf 75ms für leichteres Auslösen
-            key-positions = <36 37>; 
-            bindings = <&kp ESC>;
-        };
-
-        // 2. COLON (:) auf der Home Row (Rechte Hand)
-        // Tasten: H (Zeige) + A (Mittel)
-        // Glove80 Matrix Indizes: 41 und 42
-        combo_colon {
-            timeout-ms = <75>;
-            key-positions = <41 42>;
-            bindings = <&kp COLON>;
-        };
-        
-        // 3. TAB (Optional) auf Linke Hand
-        // Tasten: N (Klein) + R (Ring) -> Wenn du das willst
-        // Glove80 Matrix Indizes: 35 und 36
-        combo_tab {
-            timeout-ms = <75>;
-            key-positions = <35 36>;
-            bindings = <&kp TAB>;
-        };
-    };
-
-    /* ---------------------------------------------------------
-       MACROS (Factory Defaults)
+       MACROS
        --------------------------------------------------------- */
     macros {
         rgb_ug_status_macro: rgb_ug_status_macro_0 {
@@ -122,6 +87,34 @@
     };
 
     /* ---------------------------------------------------------
+       COMBOS (CORRECTED FOR GLOVE80 MATRIX)
+       --------------------------------------------------------- */
+    combos {
+        compatible = "zmk,combos";
+        
+        // ESCAPE: Linke Hand Home-Row (Mittel + Ringfinger / T+R)
+        combo_esc {
+            timeout-ms = <75>;
+            key-positions = <36 37>; 
+            bindings = <&kp ESC>;
+        };
+
+        // COLON (:): Rechte Hand Home-Row (Zeige + Mittelfinger / H+A)
+        combo_colon {
+            timeout-ms = <75>;
+            key-positions = <41 42>;
+            bindings = <&kp COLON>;
+        };
+        
+        // TAB: Linke Hand Home-Row (Klein + Ringfinger / N+R)
+        combo_tab {
+            timeout-ms = <75>;
+            key-positions = <35 36>;
+            bindings = <&kp TAB>;
+        };
+    };
+
+    /* ---------------------------------------------------------
        KEYMAP
        --------------------------------------------------------- */
     keymap {
@@ -129,6 +122,7 @@
 
         // LAYER 0: GALLIUM V2 + CALLUM MODS
         default_layer {
+            display-name = "Gallium";
             bindings = <
             &kp F1         &kp F2   &kp F3   &kp F4   &kp F5                                                                                 &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
             &kp EQUAL      &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                                        &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
@@ -136,22 +130,21 @@
             // GALLIUM TOP ROW
             &kp TAB        &kp B    &kp L    &kp D    &kp C    &kp V                                                                         &kp J    &kp Y    &kp O    &kp U     &kp COMMA &kp BSLH
             
-            // GALLIUM HOME ROW (Speed Zone)
+            // GALLIUM HOME ROW
             &trans         &kp N    &kp R    &kp T    &kp S    &kp G                                                                         &kp P    &kp H    &kp A    &kp E     &kp I     &kp SQT
             
-            // GALLIUM BOTTOM ROW
+            // GALLIUM BOTTOM ROW (+ Upper Thumbs: Sticky Mods)
             &kp GRAVE      &kp Q    &kp X    &kp M    &kp W    &kp Z    &sk LSHFT  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
             
-            // THUMBS (Callum Style & Layer Taps)
-            // Left: Magic, Home, End, Left, Right | Thumb Cluster: Backspace, Del, Gui, Gui, Ret, Space
-            // ANGEPASST FÜR GLOVE80 THUMB CLUSTER LOGIK
-            &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &kp BSPC   &kp DEL    &sk LGUI      &sk RGUI  &lt SYM RET &lt NAV SPACE       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
+            // LOWER THUMBS (Dein Wunsch-Layout)
+            // Links: Space(Nav), Del, LGUI | Rechts: RGUI, Backspace, Enter(Sym)
+            &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &lt NAV SPACE &kp DEL &sk LGUI      &sk RGUI  &kp BSPC   &lt SYM RET       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
 
-        // LAYER 1: NAVIGATION (Vim Style) & EDITING
-        // Activated by holding SPACE (Left Thumb)
+        // LAYER 1: NAVIGATION
         nav_layer {
+            display-name = "Nav";
             bindings = <
             &trans     &trans       &trans       &trans       &trans                                                                                      &trans     &trans    &trans    &trans    &trans
             &trans     &trans       &trans       &trans       &trans       &trans                                                                         &trans     &trans    &trans    &trans    &trans    &trans
@@ -162,25 +155,25 @@
             >;
         };
 
-        // LAYER 2: SYMBOLS & NUMBERS
-        // Activated by holding ENTER (Right Thumb)
+        // LAYER 2: SYMBOLS
         sym_layer {
+            display-name = "Sym";
             bindings = <
             &trans     &trans       &trans       &trans       &trans                                                                                      &trans     &trans    &trans    &trans    &trans
             &trans     &trans       &trans       &trans       &trans       &trans                                                                         &trans     &trans    &trans    &trans    &trans    &trans
             &trans     &kp EXCL     &kp AT       &kp HASH     &kp DLLR     &kp PRCNT                                                                      &kp CARET  &kp AMPS  &kp STAR  &kp UNDER &kp EQUAL &trans
-            // Symbole: Öffnende Klammern auf starken Fingern links
             &trans     &kp GRAVE    &kp LBRC     &kp LPAR     &kp LBKT     &kp MINUS                                                                      &kp PLUS   &kp RBKT  &kp RPAR  &kp RBRC  &kp BSLH  &trans
             &trans     &trans       &trans       &trans       &trans       &trans     &trans     &trans     &trans        &trans    &trans    &trans      &kp PIPE   &trans    &trans    &trans    &trans    &trans
             &trans     &trans       &trans       &trans       &trans                  &trans     &trans     &trans        &trans    &trans    &trans                 &trans    &trans    &trans    &trans    &trans
             >;
         };
 
-        // LAYER 3: MAGIC (System Control - unverändert)
+        // LAYER 3: MAGIC
         magic_layer {
+            display-name = "Magic";
             bindings = <
             &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
-            &none         &none            &none            &none            &none            &none                                                                               &none      &none      &none      &none      &none      &none
+            &none         &to QWERTY       &none            &none            &none            &none                                                                               &none      &none      &none      &none      &to BASE   &none
             &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
             &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
             &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
@@ -188,8 +181,9 @@
             >;
         };
 
-        // LAYER 4: FACTORY TEST (unverändert)
+        // LAYER 4: FACTORY TEST
         factory_test_layer {
+            display-name = "Test";
             bindings = <
             &kp N0   &kp N6   &kp N2   &kp N8   &kp N4                                                                              &kp N4   &kp N8   &kp N2   &kp N6   &kp N0
             &kp N1   &kp N7   &kp N3   &kp N9   &kp N5   &kp N0                                                            &kp N0   &kp N5   &kp N9   &kp N3   &kp N7   &kp N1
@@ -197,6 +191,21 @@
             &kp N3   &kp N9   &kp N5   &kp N1   &kp N7   &kp N2                                                            &kp N2   &kp N7   &kp N1   &kp N5   &kp N9   &kp N3
             &kp N4   &kp N0   &kp N6   &kp N2   &kp N8   &kp N3   &kp N4   &kp N5   &kp N6         &kp N6   &kp N5   &kp N4   &kp N3   &kp N8   &kp N2   &kp N6   &kp N0   &kp N4
             &kp N5   &kp N1   &kp N7   &kp N3   &kp N9            &kp N7   &kp N8   &kp N9         &kp N9   &kp N8   &kp N7            &kp N9   &kp N3   &kp N7   &kp N1   &kp N5
+            >;
+        };
+
+        // LAYER 5: QWERTY (Gaming Mode)
+        qwerty_layer {
+            display-name = "Qwerty";
+            bindings = <
+            &kp F1     &kp F2   &kp F3   &kp F4   &kp F5                                                                                 &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
+            &kp EQUAL  &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                                        &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
+            &kp TAB    &kp Q    &kp W    &kp E    &kp R    &kp T                                                                         &kp Y    &kp U    &kp I    &kp O     &kp P     &kp BSLH
+            &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                         &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
+            &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B    &kp LSHFT  &kp LCTRL  &kp LALT      &kp RALT  &kp RCTRL  &kp RSHFT   &kp N    &kp M    &kp COMMA &kp DOT   &kp FSLH  &kp PG_UP
+            
+            // THUMBS: Standard Belegung (ohne Layer Taps, pur für Gaming)
+            &magic MAGIC 0 &kp HOME &kp END &kp LEFT &kp RIGHT      &kp SPACE &kp DEL &kp LGUI      &kp RGUI  &kp BSPC   &kp RET         &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
     };
