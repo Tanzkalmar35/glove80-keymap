@@ -12,13 +12,14 @@
 
 #define HYPER LC(LS(LG(LALT)))
 
-// LAYER DEFINITIONS (REORDERED FOR PRIORITY)
+// LAYER DEFINITIONS
 #define GALLIUM 0
 #define NAV  1
 #define SYM  2
 #define FACTORY_TEST 3
 #define QWERTY 4
-#define MAGIC 5  // MAGIC muss der höchste Layer sein!
+#define MAGIC 5
+#define GALLIUM_SAFE 6  // <--- NEU: Der "Safe Mode" Layer
 
 / {
     /* ---------------------------------------------------------
@@ -63,21 +64,18 @@
             #binding-cells = <0>;
             bindings = <&out OUT_BLE>, <&bt BT_SEL 0>;
         };
-
         bt_1: bt_profile_macro_1 {
             label = "BT_1";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&out OUT_BLE>, <&bt BT_SEL 1>;
         };
-
         bt_2: bt_profile_macro_2 {
             label = "BT_2";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&out OUT_BLE>, <&bt BT_SEL 2>;
         };
-
         bt_3: bt_profile_macro_3 {
             label = "BT_3";
             compatible = "zmk,behavior-macro";
@@ -92,11 +90,16 @@
     combos {
         compatible = "zmk,combos";
         
+        // WICHTIG: Wir fügen "layers = <GALLIUM>" hinzu.
+        // Das bedeutet: Diese Combos funktionieren NUR auf Layer 0.
+        // Wenn du zu Layer 6 (Safe) wechselst, sind sie aus.
+
         // ESCAPE: Linke Hand Home-Row (T + R)
         combo_esc {
             timeout-ms = <75>;
             key-positions = <36 37>; 
             bindings = <&kp ESC>;
+            layers = <GALLIUM>; // Nur aktiv im normalen Modus
         };
 
         // COLON (:): Rechte Hand Home-Row (H + A)
@@ -104,6 +107,7 @@
             timeout-ms = <75>;
             key-positions = <41 42>;
             bindings = <&kp COLON>;
+            layers = <GALLIUM>;
         };
         
         // TAB: Linke Hand Home-Row (N + R)
@@ -111,6 +115,7 @@
             timeout-ms = <75>;
             key-positions = <35 36>;
             bindings = <&kp TAB>;
+            layers = <GALLIUM>;
         };
     };
 
@@ -120,7 +125,7 @@
     keymap {
         compatible = "zmk,keymap";
 
-        // LAYER 0: GALLIUM V2 (Base)
+        // LAYER 0: GALLIUM V2 (Base - Combos AN)
         default_layer {
             display-name = "Gallium";
             bindings = <
@@ -129,7 +134,7 @@
             
             &kp TAB        &kp B    &kp L    &kp D    &kp C    &kp V                                                                         &kp J    &kp Y    &kp O    &kp U     &kp COMMA &kp BSLH
             &kp ESC        &kp N    &kp R    &kp T    &kp S    &kp G                                                                         &kp P    &kp H    &kp A    &kp E     &kp I     &kp SQT
-            &sk LSHIFT     &kp Q    &kp X    &kp M    &kp W    &kp Z    &kp GRAVE  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
+            &sk LSHFT      &kp Q    &kp X    &kp M    &kp W    &kp Z    &kp GRAVE  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
             
             &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &lt NAV SPACE &kp DEL &sk LGUI      &sk RGUI  &kp BSPC   &lt SYM RET       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
@@ -174,7 +179,7 @@
             >;
         };
 
-        // LAYER 4: QWERTY (Gaming)
+        // LAYER 4: QWERTY
         qwerty_layer {
             display-name = "Qwerty";
             bindings = <
@@ -184,21 +189,38 @@
             &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                         &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
             &kp LSHFT  &kp Z    &kp X    &kp C    &kp V    &kp B    &kp GRAVE  &kp LCTRL  &kp LALT      &kp RALT  &kp RCTRL  &kp RSHFT   &kp N    &kp M    &kp COMMA &kp DOT   &kp FSLH  &kp PG_UP
             
-            // MAGIC Key muss hier funktionieren, um Layer 5 (Magic) über Layer 4 (Qwerty) zu legen!
             &magic MAGIC 0 &kp HOME &kp END &kp LEFT &kp RIGHT      &kp SPACE &kp DEL &kp LGUI      &kp RGUI  &kp BSPC   &kp RET         &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
 
-        // LAYER 5: MAGIC (Highest Priority!)
+        // LAYER 5: MAGIC (Control & Toggles)
         magic_layer {
             display-name = "Magic";
             bindings = <
             &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
-            &none         &to QWERTY       &none            &none            &none            &none                                                                               &none      &none      &none      &none      &to GALLIUM &none
+            &none         &to QWERTY       &to GALLIUM_SAFE &none            &none            &none                                                                               &none      &none      &none      &none      &to GALLIUM &none
+            //            ^ (Q)            ^ (C=CombosOff)                                                                                                                                                                  ^ (P=CombosOn)
             &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
             &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
             &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
             &none         &none            &none            &none            &none                             &bt_0      &bt_1      &out OUT_USB  &none      &none      &none                 &none      &none      &none      &none      &to FACTORY_TEST
+            >;
+        };
+
+        // LAYER 6: GALLIUM SAFE MODE (Combos AUS)
+        // 1:1 Kopie von Layer 0, aber da dieser Layer "ID 6" hat,
+        // feuern die Combos (die nur auf ID 0 lauschen) hier nicht.
+        gallium_safe_layer {
+            display-name = "Safe";
+            bindings = <
+            &kp F1         &kp F2   &kp F3   &kp F4   &kp F5                                                                                 &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
+            &kp EQUAL      &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                                        &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
+            
+            &kp TAB        &kp B    &kp L    &kp D    &kp C    &kp V                                                                         &kp J    &kp Y    &kp O    &kp U     &kp COMMA &kp BSLH
+            &kp ESC        &kp N    &kp R    &kp T    &kp S    &kp G                                                                         &kp P    &kp H    &kp A    &kp E     &kp I     &kp SQT
+            &sk LSHFT      &kp Q    &kp X    &kp M    &kp W    &kp Z    &kp GRAVE  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
+            
+            &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &lt NAV SPACE &kp DEL &sk LGUI      &sk RGUI  &kp BSPC   &lt SYM RET       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
     };
