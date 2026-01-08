@@ -193,21 +193,7 @@
             >;
         };
 
-        // LAYER 5: MAGIC (Control & Toggles)
-        magic_layer {
-            display-name = "Magic";
-            bindings = <
-            &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
-            &none         &to QWERTY       &to GALLIUM_SAFE &none            &none            &none                                                                               &none      &none      &none      &none      &to GALLIUM &none
-            //            ^ (Q)            ^ (C=CombosOff)                                                                                                                                                                  ^ (P=CombosOn)
-            &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
-            &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
-            &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
-            &none         &none            &none            &none            &none                             &bt_0      &bt_1      &out OUT_USB  &none      &none      &none                 &none      &none      &none      &none      &to FACTORY_TEST
-            >;
-        };
-
-        // LAYER 6: GALLIUM SAFE MODE (Combos AUS)
+        // LAYER 5: GALLIUM SAFE MODE (Combos AUS)
         // 1:1 Kopie von Layer 0, aber da dieser Layer "ID 6" hat,
         // feuern die Combos (die nur auf ID 0 lauschen) hier nicht.
         gallium_safe_layer {
@@ -221,6 +207,20 @@
             &sk LSHFT      &kp Q    &kp X    &kp M    &kp W    &kp Z    &kp GRAVE  &sk LCTRL  &sk LALT      &sk RALT  &sk RCTRL  &sk RSHFT   &kp K    &kp F    &kp SQT  &kp SEMI  &kp DOT   &kp PG_UP
             
             &magic MAGIC 0 &kp HOME &kp END  &kp LEFT &kp RIGHT         &lt NAV SPACE &kp DEL &sk LGUI      &sk RGUI  &kp BSPC   &lt SYM RET       &kp UP   &kp DOWN &kp LBKT  &kp RBKT  &kp PG_DN
+            >;
+        };
+
+        // LAYER 6: MAGIC (Control & Toggles)
+        magic_layer {
+            display-name = "Magic";
+            bindings = <
+            &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none      &none      &none      &none      &bt BT_CLR_ALL
+            &none         &to QWERTY       &to GALLIUM_SAFE &none            &none            &none                                                                               &none      &none      &none      &none      &to GALLIUM &none
+            //            ^ (Q)            ^ (C=CombosOff)                                                                                                                                                                  ^ (P=CombosOn)
+            &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none      &none      &none      &none      &none      &none
+            &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none      &none      &none      &none      &none      &bootloader
+            &sys_reset    &none            &none            &none            &none            &none            &bt_2      &bt_3      &none         &none      &none      &none      &none      &none      &none      &none      &none      &sys_reset
+            &none         &none            &none            &none            &none                             &bt_0      &bt_1      &out OUT_USB  &none      &none      &none                 &none      &none      &none      &none      &to FACTORY_TEST
             >;
         };
     };
