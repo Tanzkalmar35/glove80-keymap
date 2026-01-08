@@ -18,8 +18,8 @@
 #define SYM  2
 #define FACTORY_TEST 3
 #define QWERTY 4
-#define MAGIC 5
-#define GALLIUM_SAFE 6  // <--- NEU: Der "Safe Mode" Layer
+#define GALLIUM_SAFE 5
+#define MAGIC 6
 
 / {
     /* ---------------------------------------------------------
