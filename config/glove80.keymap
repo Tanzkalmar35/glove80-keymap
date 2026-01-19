@@ -26,6 +26,7 @@
        --------------------------------------------------------- */
     behaviors {
         // CALLUM STYLE STICKY KEYS
+        // Tap mod once, then tap letter. No holding.
         sk: sticky_key {
             compatible = "zmk,behavior-sticky-key";
             label = "STICKY_KEY";
@@ -45,6 +46,7 @@
             bindings = <&mo>, <&rgb_ug_status_macro>;
         };
 
+        // CAPS WORD: Double Shift triggers CAPS_LOCK that turns off automatically
         cw: caps_word {
             compatible = "zmk,behavior-caps-word";
             label = "CAPS_WORD";
@@ -128,10 +130,10 @@
             &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
             
             // THUMB CLUSTER
-            // LEFT TOP:    LSHIFT  LCTRL  LALT     |   RIGHT TOP:    SYM    NAV    MAGIC
-            // LEFT BOTTOM: LGUI    DEL    SPACE    |   RIGHT BOTTOM: REPEAT BSPC   ENTER
+            // LEFT TOP:    LSHIFT  LCTRL  LALT     |   RIGHT TOP:    NAV     MAGIC    REPEAT
+            // LEFT BOTTOM: LGUI    DEL    SPACE    |   RIGHT BOTTOM: SYM     BSPC     ENTER
             
-            &sk LSHFT   &sk LCTRL  &sk LALT  &sk LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &key_repeat     &sl SYM  &sl NAV   &magic MAGIC 0
+            &magic MAGIC 0   &sk LSHFT  &sk LCTRL  &sk LALT  &sk LGUI  &kp DEL      &kp RET  &kp BSPC &sl SYM     &sl NAV  &magic MAGIC 0   &key_repeat
             >;
         };
 
@@ -197,8 +199,8 @@
             &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
             &kp LCTRL  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
             
-            // GAMING THUMBS: Holdable Mods
-            &kp LSHFT   &kp LCTRL  &kp LALT  &kp LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &trans      &trans   &trans    &magic MAGIC 0
+            // GAMING THUMBS: Holdable Mods. Arrow Keys Restored to Glove80 default position.
+            &magic MAGIC 0   &kp LSHFT  &kp LCTRL  &kp LALT  &kp LGUI  &kp SPACE     &kp RET  &kp BSPC &kp UP      &kp DOWN  &kp RIGHT   &kp LEFT
             >;
         };
     };
