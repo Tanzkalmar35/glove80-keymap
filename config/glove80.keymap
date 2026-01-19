@@ -16,8 +16,9 @@
 #define QWERTY 0
 #define NAV  1
 #define SYM  2
-#define FACTORY_TEST 3
+#define NUM  3
 #define MAGIC 4
+#define GAME 5
 
 / {
     /* ---------------------------------------------------------
@@ -25,8 +26,6 @@
        --------------------------------------------------------- */
     behaviors {
         // CALLUM STYLE STICKY KEYS
-        // Tap to activate, type next key to apply. 
-        // No holding required.
         sk: sticky_key {
             compatible = "zmk,behavior-sticky-key";
             label = "STICKY_KEY";
@@ -46,7 +45,6 @@
             bindings = <&mo>, <&rgb_ug_status_macro>;
         };
 
-        // CAPS WORD (Ideal for CONSTANTS)
         cw: caps_word {
             compatible = "zmk,behavior-caps-word";
             label = "CAPS_WORD";
@@ -72,7 +70,7 @@
     };
 
     /* ---------------------------------------------------------
-       COMBOS (Misfire Proof)
+       COMBOS
        --------------------------------------------------------- */
     combos {
         compatible = "zmk,combos";
@@ -103,11 +101,16 @@
             bindings = <&kp TAB>;
             layers = <QWERTY>;
         };
-
-        // CAPS WORD: Left Shift + Right Shift (Using the Sticky Shift positions)
+        
+        // CAPS WORD: Double Shift (Thumb Shift + Top Shift on Left Thumb)
+        // or just Left Shift + Right Shift combo on alpha row if preferred.
+        // Let's stick to LShift + RShift physical keys on thumbs or shift keys.
+        // Since we have sticky shifts on thumbs, pressing LSHIFT(Thumb) + RSHIFT(Pinky) is awkward.
+        // New Combo: Tap both Shift keys on Left Thumb (Shift) + Left Pinky (Shift) if mapped?
+        // Simpler: Q + Z
         combo_capsword {
             timeout-ms = <100>;
-            key-positions = <46 57>; 
+            key-positions = <10 20>; // Q + A
             bindings = <&cw>;
             layers = <QWERTY>;
         };
@@ -125,21 +128,25 @@
             bindings = <
             &kp F1     &kp F2   &kp F3   &kp F4   &kp F5                                                                        &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
             &kp EQUAL  &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                               &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
-            
             &kp TAB    &kp Q    &kp W    &kp E    &kp R    &kp T                                                                &kp Y    &kp U    &kp I    &kp O     &kp P     &kp BSLH
             &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
             
-            // NOTE: Left Shift is BACK on the Pinky (Row 4, Col 0).
-            // It is a Sticky Key (&sk) for speed, but you can hold it if you want.
-            &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B    &sk LSHFT  &sk LCTRL  &sk LALT     &sk LGUI  &sk RCTRL  &sk RSHFT   &kp N    &kp M    &kp COMMA &kp DOT   &kp FSLH  &kp PG_UP
+            // BOTTOM ROW: Default Glove80 Arrows on Right
+            &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
+            &magic MAGIC 0 &trans  &trans  &trans  &trans  &trans                                                               &trans   &trans   &trans    &kp UP   &kp DOWN  &kp PG_DN
+            //                                                                                                                                              ^ Arrows ^
             
-            // LEFT THUMB: SPACE + MODS (Cmd/Alt/Ctrl)              // RIGHT THUMB: ENTER + LAYERS + REPEAT
-            // Space is exactly where you like it.                  // Enter is exactly where you like it.
-            &magic MAGIC 0 &kp HOME &kp END &sk LALT &sk LGUI       &kp SPACE &sk LCTRL &sk LSHFT       &sk RSHFT &sk RGUI  &kp RET           &sl NAV  &sl SYM  &key_repeat &kp RBKT  &kp PG_DN
+            // THUMB CLUSTER (Your Requested Layout)
+            // Left Top:    Shift | Ctrl | Alt
+            // Left Bottom: Space | Del  | Gui
+            // Right Top:   Nav   | Magic| Repeat
+            // Right Bottom: Sym  | Bspc | Enter
+            
+            &sk LSHFT   &sk LCTRL  &sk LALT  &sk LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &sl SYM     &key_repeat  &magic MAGIC 0   &sl NAV
             >;
         };
 
-        // LAYER 1: NAVIGATION (Vim Arrows)
+        // LAYER 1: NAVIGATION
         nav_layer {
             display-name = "Nav";
             bindings = <
@@ -158,28 +165,23 @@
             bindings = <
             &trans     &trans     &trans     &trans     &trans                                                                         &trans     &trans     &trans    &trans    &trans
             &trans     &trans     &trans     &trans     &trans     &trans                                                   &trans     &trans     &trans     &trans    &trans    &trans
-            
-            // LEFT: Logic & Math                                                                                       // RIGHT: Syntax & Brackets (HJKL)
             &trans     &kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT                                                &kp CARET  &kp AMPS   &kp STAR   &kp LBRC  &kp RBRC  &trans
             &trans     &kp GRAVE  &kp TILDE  &kp MINUS  &kp PLUS   &kp EQUAL                                                &kp PIPE   &kp LPAR   &kp RPAR   &kp LBKT  &kp RBKT  &trans
-            
-            // LEFT: Underscore & Path                                                                                  // RIGHT: Vim Anchors (^ and $)
             &trans     &kp BSLH   &kp LT     &kp GT     &kp UNDER  &kp QMARK  &trans      &trans   &trans        &trans     &trans     &trans       &kp UNDER  &kp CARET &kp DLLR  &trans    &trans    &trans
-            
             &trans     &trans     &trans     &trans     &trans                &trans      &trans   &trans        &trans     &trans     &trans                  &trans    &trans    &trans    &trans    &trans
             >;
         };
 
-        // LAYER 3: FACTORY TEST (Unchanged)
-        factory_test_layer {
-            display-name = "Test";
+        // LAYER 3: NUMPAD
+        num_layer {
+            display-name = "Num";
             bindings = <
-            &kp N0   &kp N6   &kp N2   &kp N8   &kp N4                                                                        &kp N4   &kp N8   &kp N2   &kp N6   &kp N0
-            &kp N1   &kp N7   &kp N3   &kp N9   &kp N5   &kp N0                                                      &kp N0   &kp N5   &kp N9   &kp N3   &kp N7   &kp N1
-            &kp N2   &kp N8   &kp N4   &kp N0   &kp N6   &kp N1                                                      &kp N1   &kp N6   &kp N0   &kp N4   &kp N8   &kp N2
-            &kp N3   &kp N9   &kp N5   &kp N1   &kp N7   &kp N2                                                      &kp N2   &kp N7   &kp N1   &kp N5   &kp N9   &kp N3
-            &kp N4   &kp N0   &kp N6   &kp N2   &kp N8   &kp N3   &kp N4   &kp N5   &kp N6          &kp N6   &kp N5   &kp N4   &kp N3   &kp N8   &kp N2   &kp N6   &kp N0   &kp N4
-            &kp N5   &kp N1   &kp N7   &kp N3   &kp N9            &kp N7   &kp N8   &kp N9          &kp N9   &kp N8   &kp N7            &kp N9   &kp N3   &kp N7   &kp N1   &kp N5
+            &trans   &trans   &trans   &trans   &trans                                                                        &trans   &trans   &trans   &trans   &trans
+            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &trans   &trans   &trans   &trans   &trans
+            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &kp N7   &kp N8   &kp N9   &kp MINUS &kp SLASH
+            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &kp N4   &kp N5   &kp N6   &kp PLUS  &kp STAR
+            &trans   &trans   &trans   &trans   &trans   &trans   &trans   &trans   &trans          &trans   &trans   &trans   &kp N1   &kp N2   &kp N3   &kp ENTER &kp DOT
+            &trans   &trans   &trans   &trans   &trans            &trans   &trans   &trans          &trans   &trans   &trans            &kp N0   &trans   &trans   &trans   &trans
             >;
         };
 
@@ -188,11 +190,31 @@
             display-name = "Magic";
             bindings = <
             &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none       &none       &none       &none       &bt BT_CLR_ALL
-            &none         &none            &none            &none            &none            &none                                                                               &none       &none       &none       &none       &none       &none
+            &none         &to QWERTY       &to GAME         &none            &none            &none                                                                               &none       &none       &none       &none       &none       &none
             &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none       &none       &none       &none       &none       &none
             &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none       &none       &none       &none       &none       &bootloader
             &sys_reset    &none            &none            &none            &none            &none            &bt_2       &bt_3       &none          &none       &none       &none       &none       &none       &none       &none       &none       &sys_reset
-            &none         &none            &none            &none            &none                             &bt_0       &bt_1       &out OUT_USB   &none       &none       &none                   &none       &none       &none       &none       &to FACTORY_TEST
+            &none         &none            &none            &none            &none                             &bt_0       &bt_1       &out OUT_USB   &none       &none       &none                   &none       &none       &none       &none       &to NUM
+            >;
+        };
+
+        // LAYER 5: GAME MODE
+        // Left Thumb: Standard Hold Modifiers
+        // Arrow Keys: Active
+        game_layer {
+            display-name = "Game";
+            bindings = <
+            &kp F1     &kp F2   &kp F3   &kp F4   &kp F5                                                                        &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
+            &kp EQUAL  &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                               &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
+            &kp TAB    &kp Q    &kp W    &kp E    &kp R    &kp T                                                                &kp Y    &kp U    &kp I    &kp O     &kp P     &kp BSLH
+            &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
+            &kp LSHIFT  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
+            &magic MAGIC 0 &trans  &trans  &trans  &trans  &trans                                                               &trans   &trans   &trans    &kp UP   &kp DOWN  &kp PG_DN
+            
+            // THUMBS (GAMING):
+            // Matches Typing layout but with HOLD modifiers instead of sticky
+            // LShift | LCtrl | LAlt  ||  LGUI | Del | Space
+            &kp GRAVE   &kp LCTRL  &kp LALT  &kp LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &trans      &trans       &magic MAGIC 0   &trans
             >;
         };
     };
