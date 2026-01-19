@@ -214,7 +214,7 @@
             // THUMBS (GAMING):
             // Matches Typing layout but with HOLD modifiers instead of sticky
             // LShift | LCtrl | LAlt  ||  LGUI | Del | Space
-            &kp GRAVE   &kp LCTRL  &kp LALT  &kp LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &trans      &trans       &magic MAGIC 0   &trans
+            &kp GRAVE   &kp LCTRL  &kp LALT  &kp LGUI  &kp DEL   &kp SPACE                                         &kp RET  &kp BSPC &trans      &ESC       &magic MAGIC 0   &ESC
             >;
         };
     };
