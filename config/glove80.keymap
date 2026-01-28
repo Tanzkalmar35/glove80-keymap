@@ -13,30 +13,32 @@
 #define HYPER LC(LS(LG(LALT)))
 
 // LAYER DEFINITIONS
-#define QWERTY 0
-#define NAV  1
-#define SYM  2
-#define NUM  3
-#define MAGIC 4
-#define GAME 5
+#define BASE     0
+#define NAV      1
+#define SYM      2
+#define MAGIC    3
+#define GAME     4 // Clean QWERTY for gaming
+#define FACTORY  5 
 
 / {
     /* ---------------------------------------------------------
-       BEHAVIORS
+       CUSTOM BEHAVIORS
        --------------------------------------------------------- */
     behaviors {
-        // CALLUM STYLE STICKY KEYS
-        // Tap mod once, then tap letter. No holding.
-        sk: sticky_key {
-            compatible = "zmk,behavior-sticky-key";
-            label = "STICKY_KEY";
-            #binding-cells = <1>;
-            bindings = <&kp>;
-            release-after-ms = <1000>;
-            quick-release;
-            ignore-modifiers;
+        // HOME ROW MODS: Tap for Char, Hold for Mod
+        // "Balanced" flavor is best for fast typists.
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HOMEROW_MODS";
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+            bindings = <&kp>, <&kp>;
         };
 
+        // MAGIC KEY: Tap for Magic Layer, Hold for Status
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             label = "MAGIC_HOLD_TAP";
@@ -44,14 +46,6 @@
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             bindings = <&mo>, <&rgb_ug_status_macro>;
-        };
-
-        // CAPS WORD: Double Shift triggers CAPS_LOCK that turns off automatically
-        cw: caps_word {
-            compatible = "zmk,behavior-caps-word";
-            label = "CAPS_WORD";
-            #binding-cells = <0>;
-            continue-list = <UNDERSCORE MINUS BSPC DEL>;
         };
     };
 
@@ -65,10 +59,30 @@
             #binding-cells = <0>;
             bindings = <&rgb_ug RGB_STATUS>;
         };
-        bt_0: bt_0 { label = "BT_0"; compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&out OUT_BLE>, <&bt BT_SEL 0>; };
-        bt_1: bt_1 { label = "BT_1"; compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&out OUT_BLE>, <&bt BT_SEL 1>; };
-        bt_2: bt_2 { label = "BT_2"; compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&out OUT_BLE>, <&bt BT_SEL 2>; };
-        bt_3: bt_3 { label = "BT_3"; compatible = "zmk,behavior-macro"; #binding-cells = <0>; bindings = <&out OUT_BLE>, <&bt BT_SEL 3>; };
+        bt_0: bt_profile_macro_0 {
+            label = "BT_0";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 0>;
+        };
+        bt_1: bt_profile_macro_1 {
+            label = "BT_1";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 1>;
+        };
+        bt_2: bt_profile_macro_2 {
+            label = "BT_2";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 2>;
+        };
+        bt_3: bt_profile_macro_3 {
+            label = "BT_3";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 3>;
+        };
     };
 
     /* ---------------------------------------------------------
@@ -76,40 +90,32 @@
        --------------------------------------------------------- */
     combos {
         compatible = "zmk,combos";
-
-        // COLON (:): P + L (Right Hand Vertical)
-        combo_colon {
-            timeout-ms = <50>;
-            require-prior-idle-ms = <150>; 
-            key-positions = <28 40>; 
-            bindings = <&kp COLON>;
-            layers = <QWERTY>;
-        };
         
-        // ESCAPE: Q + W (Top Left)
+        // These combos only work on the BASE layer (Productivity).
+        // They are disabled in GAME mode.
+
+        // ESCAPE: J + K (Standard Vim mash)
         combo_esc {
             timeout-ms = <50>;
-            require-prior-idle-ms = <150>;
-            key-positions = <10 11>; 
+            key-positions = <41 42>; 
             bindings = <&kp ESC>;
-            layers = <QWERTY>;
+            layers = <BASE>;
         };
 
-        // TAB: A + S (Home Left)
+        // TAB: D + F (Left hand home row)
         combo_tab {
             timeout-ms = <50>;
-            require-prior-idle-ms = <150>;
-            key-positions = <22 23>;
+            key-positions = <38 39>;
             bindings = <&kp TAB>;
-            layers = <QWERTY>;
+            layers = <BASE>;
         };
-        
-        // CAPS WORD: Q + Z (Left Pinky Column)
-        combo_capsword {
-            timeout-ms = <100>;
-            key-positions = <10 46>; 
-            bindings = <&cw>;
-            layers = <QWERTY>;
+
+        // COLON: L + ; (Right pinky area, fast roll)
+        combo_colon {
+            timeout-ms = <50>;
+            key-positions = <43 44>;
+            bindings = <&kp COLON>;
+            layers = <BASE>;
         };
     };
 
@@ -119,88 +125,86 @@
     keymap {
         compatible = "zmk,keymap";
 
-        // LAYER 0: QWERTY SPEED
+        // LAYER 0: PRODUCTIVITY BASE (QWERTY + HRMs)
+        // Mods: G/H=None, F/J=Shift, D/K=Ctrl, S/L=Alt, A/;=GUI
         default_layer {
-            display-name = "QWERTY";
+            display-name = "Base";
             bindings = <
-            &kp F1     &kp F2   &kp F3   &kp F4   &kp F5                                                                        &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
-            &kp EQUAL  &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                               &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
-            &kp TAB    &kp Q    &kp W    &kp E    &kp R    &kp T                                                                &kp Y    &kp U    &kp I    &kp O     &kp P     &kp BSLH
-            &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
-            &kp GRAVE  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
+            &kp F1         &kp F2      &kp F3      &kp F4      &kp F5                                                                                           &kp F6      &kp F7      &kp F8      &kp F9      &kp F10
+            &kp EQUAL      &kp N1      &kp N2      &kp N3      &kp N4      &kp N5                                                                               &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
+            &kp TAB        &kp Q       &kp W       &kp E       &kp R       &kp T                                                                                &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BSLH
+            &kp ESC        &hm LGUI A  &hm LALT S  &hm LCTRL D &hm LSHFT F &kp G                                                                                &kp H       &hm RSHFT J &hm RCTRL K &hm RALT L  &hm RGUI SEMI &kp SQT
+            &kp GRAVE      &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LSHFT   &kp LCTRL   &kp LALT          &kp LGUI    &kp RCTRL   &kp RSHFT    &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
             
-            // THUMB CLUSTER
-            // LEFT TOP:    LSHIFT  LCTRL  LALT     |   RIGHT TOP:    NAV     MAGIC    REPEAT
-            // LEFT BOTTOM: LGUI    DEL    SPACE    |   RIGHT BOTTOM: SYM     BSPC     ENTER
-            
-            &magic MAGIC 0   &sk LSHFT  &sk LCTRL  &sk LALT  &sk LGUI  &kp DEL      &kp RET  &kp BSPC &sl SYM     &sl NAV  &magic MAGIC 0   &key_repeat
+            &magic MAGIC 0 &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &lt NAV SPACE &kp DEL   &kp LGUI          &kp RGUI    &kp BSPC    &lt SYM RET              &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
             >;
         };
 
-        // LAYER 1: NAVIGATION
+        // LAYER 1: NAVIGATION (Vim style + Windows management)
         nav_layer {
             display-name = "Nav";
             bindings = <
-            &trans     &trans     &trans     &trans     &trans                                                                        &trans     &trans    &trans    &trans    &trans
-            &trans     &trans     &trans     &trans     &trans     &trans                                                  &trans     &trans    &trans    &trans    &trans    &trans
-            &trans     &kp LG(Z)  &kp LG(X)  &kp LG(C)  &kp LG(V)  &trans                                                  &kp PG_UP  &kp HOME  &kp UP    &kp END   &trans    &trans
-            &trans     &sk LSHFT  &sk LCTRL  &sk LALT   &sk LGUI   &trans                                                  &kp PG_DN  &kp LEFT  &kp DOWN  &kp RIGHT &trans    &trans
-            &trans     &trans     &trans     &trans     &trans     &trans      &trans     &trans     &trans       &trans   &trans     &trans      &trans     &trans    &trans    &trans    &trans    &trans
-            &trans     &trans     &trans     &trans     &trans                 &trans     &trans     &trans       &trans   &trans     &trans                 &trans    &trans    &trans    &trans    &trans
+            &trans     &trans       &trans       &trans       &trans                                                                                                &trans      &trans      &trans      &trans      &trans
+            &trans     &trans       &trans       &trans       &trans       &trans                                                                                   &trans      &trans      &trans      &trans      &trans      &trans
+            &trans     &trans       &trans       &trans       &trans       &trans                                                                                   &trans      &kp PG_DN   &kp PG_UP   &trans      &trans      &trans
+            &trans     &kp LGUI     &kp LALT     &kp LCTRL    &kp LSHFT    &trans                                                                                   &kp LEFT    &kp DOWN    &kp UP      &kp RIGHT   &trans      &trans
+            &trans     &kp LC(Z)    &kp LC(X)    &kp LC(C)    &kp LC(V)    &trans      &trans      &trans      &trans            &trans      &trans      &trans     &trans      &kp HOME    &kp END     &trans      &trans      &trans
+            &trans     &trans       &trans       &trans       &trans                   &trans      &trans      &trans            &trans      &trans      &trans                 &trans      &trans      &trans      &trans      &trans
             >;
         };
 
-        // LAYER 2: SYMBOLS (Vim Optimized)
+        // LAYER 2: SYMBOLS (Programmer / Vim Optimized)
+        // Designed for rolls. Brackets on Home Row Right.
         sym_layer {
             display-name = "Sym";
             bindings = <
-            &trans     &trans     &trans     &trans     &trans                                                                         &trans     &trans     &trans    &trans    &trans
-            &trans     &trans     &trans     &trans     &trans     &trans                                                   &trans     &trans     &trans     &trans    &trans    &trans
-            &trans     &kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT                                                &kp CARET  &kp AMPS   &kp STAR   &kp LBRC  &kp RBRC  &trans
-            &trans     &kp GRAVE  &kp TILDE  &kp MINUS  &kp PLUS   &kp EQUAL                                                &kp PIPE   &kp LPAR   &kp RPAR   &kp LBKT  &kp RBKT  &trans
-            &trans     &kp BSLH   &kp LT     &kp GT     &kp UNDER  &kp QMARK  &trans      &trans   &trans        &trans     &trans     &trans       &kp UNDER  &kp CARET &kp DLLR  &trans    &trans    &trans
-            &trans     &trans     &trans     &trans     &trans                &trans      &trans   &trans        &trans     &trans     &trans                  &trans    &trans    &trans    &trans    &trans
+            &trans     &trans       &trans       &trans       &trans                                                                                                &trans      &trans      &trans      &trans      &trans
+            &trans     &trans       &trans       &trans       &trans       &trans                                                                                   &trans      &trans      &trans      &trans      &trans      &trans
+            &trans     &kp EXCL     &kp AT       &kp HASH     &kp DLLR     &kp PRCNT                                                                                &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
+            &trans     &kp TILDE    &kp GRAVE    &kp MINUS    &kp UNDER    &kp EQUAL                                                                                &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
+            &trans     &trans       &kp PIPE     &kp PLUS     &kp BSLH     &trans      &trans      &trans      &trans            &trans      &trans      &trans     &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
+            &trans     &trans       &trans       &trans       &trans                   &trans      &trans      &trans            &trans      &trans      &trans                 &trans      &trans      &trans      &trans      &trans
             >;
         };
 
-        // LAYER 3: NUMPAD
-        num_layer {
-            display-name = "Num";
-            bindings = <
-            &trans   &trans   &trans   &trans   &trans                                                                        &trans   &trans   &trans   &trans   &trans
-            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &trans   &trans   &trans   &trans   &trans
-            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &kp N7   &kp N8   &kp N9   &kp MINUS &kp SLASH
-            &trans   &trans   &trans   &trans   &trans   &trans                                                      &trans   &kp N4   &kp N5   &kp N6   &kp PLUS  &kp STAR
-            &trans   &trans   &trans   &trans   &trans   &trans   &trans   &trans   &trans          &trans   &trans   &trans   &kp N1   &kp N2   &kp N3   &kp ENTER &kp DOT
-            &trans   &trans   &trans   &trans   &trans            &trans   &trans   &trans          &trans   &trans   &trans            &kp N0   &trans   &trans   &trans   &trans
-            >;
-        };
-
-        // LAYER 4: MAGIC
+        // LAYER 3: MAGIC (System Control + Gamemode Toggle)
         magic_layer {
             display-name = "Magic";
             bindings = <
-            &bt BT_CLR    &none            &none            &none            &none                                                                                                           &none       &none       &none       &none       &bt BT_CLR_ALL
-            &none         &to QWERTY       &to GAME         &none            &none            &none                                                                               &none       &none       &none       &none       &none       &none
-            &none         &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                                     &none       &none       &none       &none       &none       &none
-            &bootloader   &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                                     &none       &none       &none       &none       &none       &bootloader
-            &sys_reset    &none            &none            &none            &none            &none            &bt_2       &bt_3       &none          &none       &none       &none       &none       &none       &none       &none       &none       &sys_reset
-            &none         &none            &none            &none            &none                             &bt_0       &bt_1       &out OUT_USB   &none       &none       &none                   &none       &none       &none       &none       &to NUM
+            &bt BT_CLR  &none        &none        &none        &none                                                                                                &none       &none       &none       &none       &bt BT_CLR_ALL
+            &none       &none        &none        &none        &none        &none                                                                                   &none       &none       &none       &none       &none       &none
+            &none       &rgb_ug RGB_SPI &rgb_ug RGB_SAI &rgb_ug RGB_HUI &rgb_ug RGB_BRI &rgb_ug RGB_TOG                                                             &none       &none       &none       &none       &none       &none
+            &bootloader &rgb_ug RGB_SPD &rgb_ug RGB_SAD &rgb_ug RGB_HUD &rgb_ug RGB_BRD &rgb_ug RGB_EFF                                                             &none       &none       &none       &none       &none       &bootloader
+            &sys_reset  &none        &none        &none        &none        &none       &bt_2       &bt_3       &none            &none       &none       &none      &none       &none       &none       &none       &none       &sys_reset
+            &none       &none        &none        &none        &none                    &bt_0       &bt_1       &out OUT_USB     &to BASE    &to GAME    &to FACTORY            &none       &none       &none       &none       &none
             >;
         };
 
-        // LAYER 5: GAME MODE
+        // LAYER 4: GAMING MODE (Pure QWERTY)
+        // No Home Row Mods. No Layer Taps on Space. Sticky keys removed.
         game_layer {
             display-name = "Game";
             bindings = <
-            &kp F1     &kp F2   &kp F3   &kp F4   &kp F5                                                                        &kp F6   &kp F7   &kp F8   &kp F9    &kp F10
-            &kp EQUAL  &kp N1   &kp N2   &kp N3   &kp N4   &kp N5                                                               &kp N6   &kp N7   &kp N8   &kp N9    &kp N0    &kp MINUS
-            &kp TAB    &kp Q    &kp W    &kp E    &kp R    &kp T                                                                &kp Y    &kp U    &kp I    &kp O     &kp P     &kp BSLH
-            &kp ESC    &kp A    &kp S    &kp D    &kp F    &kp G                                                                &kp H    &kp J    &kp K    &kp L     &kp SEMI  &kp SQT
-            &kp LCTRL  &kp Z    &kp X    &kp C    &kp V    &kp B                                                                &kp N    &kp M    &kp COMMA &kp DOT  &kp FSLH  &kp PG_UP
+            &kp F1         &kp F2      &kp F3      &kp F4      &kp F5                                                                                           &kp F6      &kp F7      &kp F8      &kp F9      &kp F10
+            &kp EQUAL      &kp N1      &kp N2      &kp N3      &kp N4      &kp N5                                                                               &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
+            &kp TAB        &kp Q       &kp W       &kp E       &kp R       &kp T                                                                                &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BSLH
+            &kp ESC        &kp A       &kp S       &kp D       &kp F       &kp G                                                                                &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
+            &kp LSHFT      &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LSHFT   &kp LCTRL   &kp LALT          &kp LGUI    &kp RCTRL   &kp RSHFT  &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
             
-            // GAMING THUMBS: Holdable Mods. Arrow Keys Restored to Glove80 default position.
-            &magic MAGIC 0   &kp LSHFT  &kp LCTRL  &kp LALT  &kp LGUI  &kp SPACE     &kp RET  &kp BSPC &kp UP      &kp DOWN  &kp RIGHT   &kp LEFT
+            &magic MAGIC 0 &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &kp SPACE   &kp DEL     &kp LGUI          &kp RGUI    &kp BSPC    &kp RET                &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
+            >;
+        };
+
+        // LAYER 5: FACTORY TEST
+        factory_test_layer {
+            display-name = "Test";
+            bindings = <
+            &kp N0   &kp N6   &kp N2   &kp N8   &kp N4                                                                                           &kp N4   &kp N8   &kp N2   &kp N6   &kp N0
+            &kp N1   &kp N7   &kp N3   &kp N9   &kp N5   &kp N0                                                                         &kp N0   &kp N5   &kp N9   &kp N3   &kp N7   &kp N1
+            &kp N2   &kp N8   &kp N4   &kp N0   &kp N6   &kp N1                                                                         &kp N1   &kp N6   &kp N0   &kp N4   &kp N8   &kp N2
+            &kp N3   &kp N9   &kp N5   &kp N1   &kp N7   &kp N2                                                                         &kp N2   &kp N7   &kp N1   &kp N5   &kp N9   &kp N3
+            &kp N4   &kp N0   &kp N6   &kp N2   &kp N8   &kp N3   &kp N4   &kp N5   &kp N6      &kp N6   &kp N5   &kp N4   &kp N3   &kp N8   &kp N2   &kp N6   &kp N0   &kp N4
+            &kp N5   &kp N1   &kp N7   &kp N3   &kp N9            &kp N7   &kp N8   &kp N9      &kp N9   &kp N8   &kp N7            &kp N9   &kp N3   &kp N7   &kp N1   &kp N5
             >;
         };
     };
