@@ -1,8 +1,8 @@
 /*
- * GLOVE80 - VIM-CENTRIC / CLEAN-FLOW EDITION
- * SPACE is dedicated and instant.
- * SYM layer moved to RET (layer-tap).
- * NAV layer removed (use Vim motions).
+ * GLOVE80 - VIM-CENTRIC / CLEAN-FLOW EDITION (Fixed & Enhanced)
+ * SPACE is dedicated and instant. No lag.
+ * SYM layer on RET (layer-tap).
+ * Added: Caps Word, Arrow Function Macro, Not Equal Macro.
  */
 
 #include <behaviors.dtsi>
@@ -20,7 +20,6 @@
 / {
     behaviors {
         // Balanced flavor for RET-SYM layer-tap
-        // This makes it feel snappy but reliable
         st: sym_tap {
             compatible = "zmk,behavior-hold-tap";
             label = "SYM_TAP";
@@ -31,6 +30,7 @@
             bindings = <&mo>, <&kp>;
         };
 
+        // Magic key behavior
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             label = "MAGIC_HOLD_TAP";
@@ -39,16 +39,57 @@
             tapping-term-ms = <200>;
             bindings = <&mo>, <&rgb_ug_status_macro>;
         };
+
+        // Caps Word: Toggle with a combo or dedicated key
+        // Stays on for ALPHA_CHARS, turns off on Space/Punctuation
+        caps_word: caps_word {
+            compatible = "zmk,behavior-caps-word";
+            label = "CAPS_WORD";
+            #binding-cells = <0>;
+            continue-list = <UNDERSCORE MINUS BACKSPACE>;
+        };
+    };
+
+    macros {
+        rgb_ug_status_macro: rgb_ug_status_macro {
+            label = "RGB_UG_STATUS";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&rgb_ug RGB_STATUS>;
+        };
+        
+        // Programming Macros
+        m_arrow: m_arrow {
+            label = "ARROW_FUNC";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp EQUAL &kp GT>;
+        };
+        
+        m_not_eq: m_not_eq {
+            label = "NOT_EQUAL";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp EXCL &kp EQUAL>;
+        };
     };
 
     combos {
         compatible = "zmk,combos";
-        // Fast JK Escape for Vim
+        
+        // Fast JK Escape
         combo_esc {
             timeout-ms = <35>;
             key-positions = <41 42>; 
             bindings = <&kp ESC>;
             layers = <BASE>;
+        };
+
+        // Caps Word Toggle (Left Shift + Right Shift)
+        combo_caps_word {
+            timeout-ms = <50>;
+            key-positions = <52 57>; // LSHFT and RSHFT positions
+            bindings = <&caps_word>;
         };
     };
 
@@ -75,7 +116,7 @@
             &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &trans      &trans      &trans      &trans      &trans
             &trans     &kp EXCL   &kp AT      &kp HASH    &kp DLLR    &kp PRCNT                                                               &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
             &trans     &kp TILDE  &kp GRAVE   &kp MINUS   &kp UNDER   &kp EQUAL                                                               &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
-            &trans     &trans     &kp PIPE    &kp PLUS    &kp BSLH    &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
+            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
             &trans     &trans     &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans
             >;
         };
