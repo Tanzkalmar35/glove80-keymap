@@ -1,7 +1,8 @@
 /*
- * ZERO-LATENCY GLOVE80 LAYOUT (Vim & Programming Optimized)
- * Clean alpha keys for fluid writing flow.
- * Dedicated thumb modifiers to eliminate hold-tap lag.
+ * GLOVE80 - VIM-CENTRIC / CLEAN-FLOW EDITION
+ * SPACE is dedicated and instant.
+ * SYM layer moved to RET (layer-tap).
+ * NAV layer removed (use Vim motions).
  */
 
 #include <behaviors.dtsi>
@@ -12,25 +13,24 @@
 #include <dt-bindings/zmk/rgb.h>
 
 #define BASE    0
-#define NAV     1
-#define SYM     2
-#define MAGIC   3
-#define GAME    4
+#define SYM     1
+#define MAGIC   2
+#define GAME    3
 
 / {
     behaviors {
-        // Quick layer tap for thumbs - negligible lag compared to home row
-        lt_q: layer_tap_quick {
+        // Balanced flavor for RET-SYM layer-tap
+        // This makes it feel snappy but reliable
+        st: sym_tap {
             compatible = "zmk,behavior-hold-tap";
-            label = "LT_QUICK";
+            label = "SYM_TAP";
             #binding-cells = <2>;
-            flavor = "tap-unless-interrupted";
-            tapping-term-ms = <160>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
             quick-tap-ms = <150>;
             bindings = <&mo>, <&kp>;
         };
 
-        // Magic key behavior
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             label = "MAGIC_HOLD_TAP";
@@ -41,31 +41,13 @@
         };
     };
 
-    macros {
-        rgb_ug_status_macro: rgb_ug_status_macro_0 {
-            label = "RGB_UG_STATUS";
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&rgb_ug RGB_STATUS>;
-        };
-    };
-
     combos {
         compatible = "zmk,combos";
-
-        // Super-fast JK Escape (30ms timeout ensures no accidental triggers)
+        // Fast JK Escape for Vim
         combo_esc {
-            timeout-ms = <30>;
+            timeout-ms = <35>;
             key-positions = <41 42>; 
             bindings = <&kp ESC>;
-            layers = <BASE>;
-        };
-
-        // Faster Colon roll (L + ;)
-        combo_colon {
-            timeout-ms = <30>;
-            key-positions = <43 44>;
-            bindings = <&kp COLON>;
             layers = <BASE>;
         };
     };
@@ -80,21 +62,9 @@
             &kp EQUAL       &kp N1      &kp N2      &kp N3      &kp N4      &kp N5                                                                                              &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
             &kp TAB         &kp Q       &kp W       &kp E       &kp R       &kp T                                                                                               &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BSLH
             &kp ESC         &kp A       &kp S       &kp D       &kp F       &kp G                                                                                               &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
-            &kp LSHIFT       &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LCTRL   &kp LALT    &kp LGUI            &kp RGUI    &kp RALT    &kp RCTRL           &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
+            &kp GRAVE       &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LCTRL   &kp LALT    &kp LGUI            &kp RGUI    &kp RALT    &kp RCTRL           &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
             
-            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &lt_q NAV SPACE  &kp LSHFT  &kp ESC      &kp DEL     &kp BSPC    &lt_q SYM RET              &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
-            >;
-        };
-
-        nav_layer {
-            display-name = "Nav";
-            bindings = <
-            &trans     &trans     &trans      &trans      &trans                                                                              &trans      &trans      &trans      &trans      &trans
-            &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &trans      &trans      &trans      &trans      &trans
-            &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &kp PG_DN   &kp PG_UP   &trans      &trans      &trans
-            &trans     &trans     &trans      &trans      &trans      &trans                                                                  &kp LEFT    &kp DOWN    &kp UP      &kp RIGHT   &trans      &trans
-            &trans     &kp LC(Z)  &kp LC(X)   &kp LC(C)   &kp LC(V)   &trans      &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp HOME    &kp END     &trans      &trans      &trans
-            &trans     &trans     &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans
+            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &kp SPACE   &kp LSHFT   &kp LCTRL           &kp RCTRL   &kp BSPC    &st SYM RET                      &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
             >;
         };
 
