@@ -105,7 +105,7 @@
             &kp ESC         &kp A       &kp S       &kp D       &kp F       &kp G                                                                                               &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
             &kp LSHIFT       &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LCTRL   &kp LALT    &kp LGUI            &kp RGUI    &kp RALT    &kp RCTRL           &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
             
-            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &kp SPACE   &kp LSHFT   &kp ESC           &kp DEL   &kp BSPC    &st SYM RET                      &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
+            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &st SYM SPACE   &kp LSHFT   &kp ESC           &kp DEL   &kp BSPC    &st SYM RET                      &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
             >;
         };
 
@@ -114,9 +114,9 @@
             bindings = <
             &trans     &trans     &trans      &trans      &trans                                                                              &trans      &trans      &trans      &trans      &trans
             &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &trans      &trans      &trans      &trans      &trans
-            &trans     &kp EXCL   &kp AT      &kp HASH    &kp DLLR    &kp PRCNT                                                               &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
-            &trans     &kp TILDE  &kp GRAVE   &kp MINUS   &kp UNDER   &kp EQUAL                                                               &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
-            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
+            &trans     &kp EXCL   &kp AT      &kp HASH    &kp GRAVE    &kp PRCNT                                                               &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
+            &trans     &kp TILDE  &kp MINUS   &kp UNDER   &kp DLLR   &kp EQUAL                                                               &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
+            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &kp trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
             &trans     &trans     &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans
             >;
         };
