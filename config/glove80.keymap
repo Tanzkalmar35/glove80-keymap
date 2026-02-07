@@ -116,7 +116,7 @@
             &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &trans      &trans      &trans      &trans      &trans
             &trans     &kp EXCL   &kp AT      &kp HASH    &kp GRAVE    &kp PRCNT                                                               &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
             &trans     &kp TILDE  &kp MINUS   &kp UNDER   &kp DLLR   &kp EQUAL                                                               &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
-            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &kp trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
+            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
             &trans     &trans     &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans
             >;
         };
