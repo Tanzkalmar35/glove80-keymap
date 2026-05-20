@@ -312,7 +312,7 @@
                &kp LSHFT       &kp Q           &kp X           &kp M           &kp C           &kp V       &kp LCTRL &kp LALT &kp LGUI                &kp RGUI &kp RALT &kp RCTRL  &kp K           &kp P           &kp DOT         &kp MINUS       &kp FSLH        &kp PG_UP
             // ╭──── Row 5: Nav + thumb arcs (5L nav + 3L thumb + 3R thumb + 5R nav) ─────────────────────────────────╮
             // MAGIC            HOME            END             LEFT            RIGHT           SYM/TAB  SPACE  ESC            DEL    BSP   SYM/RET           UP              DOWN            [               ]               PGDN
-               &magic MAGIC 0  &kp HOME        &kp END         &kp LEFT        &kp RIGHT                   &kp space  &lt_sym SYM TAB  &kp ESC       &kp DEL  &kp BSPC  &lt_sym SYM RET                  &kp UP          &kp DOWN        &kp LBKT        &kp RBKT        &kp PG_DN
+               &magic MAGIC 0  &kp HOME        &kp END         &kp LEFT        &kp RIGHT                   &kp SPACE  &lt_sym SYM TAB  &kp ESC       &kp DEL  &kp BSPC  &lt_sym SYM RET                  &kp UP          &kp DOWN        &kp LBKT        &kp RBKT        &kp PG_DN
             >;
         };
 
