@@ -1,8 +1,33 @@
 /*
- * GLOVE80 - VIM-CENTRIC / CLEAN-FLOW EDITION (Fixed & Enhanced)
- * SPACE is dedicated and instant. No lag.
- * SYM layer on RET (layer-tap).
- * Added: Caps Word, Arrow Function Macro, Not Equal Macro.
+ * Glove80 Keymap — Graphite + Sunaku-style HRMs + Symbol + Game
+ * ══════════════════════════════════════════════════════════════
+ *
+ * Layers:
+ *   0 BASE  — Graphite layout with home row mods (GACS order)
+ *   1 SYM   — Sunaku-inspired symbol layer
+ *   2 GAME  — Plain QWERTY, zero hold-taps or special behaviors
+ *   3 MAGIC — Bluetooth / RGB / system control
+ *
+ * Graphite home row:
+ *   Left : N(GUI)  R(Alt)  S(Ctrl)  T(Shift)
+ *   Right: H(Shift) E(Ctrl) A(Alt)  I(GUI)
+ *
+ * Graphite full layout (mapped to Glove80):
+ *   Row2:  [TAB]  b  l  d  w  z  │  '  f  o  u  j  [;]
+ *   Row3:  [ESC]  N  R  S  T  g  │  y  H  E  A  I  [,]
+ *   Row4: [LSFT]  q  x  m  c  v  │  k  p  .  -  /  [PGUP]
+ *
+ * HRM tuning (Sunaku-style):
+ *   - Per-finger tapping terms (pinky longest, index shortest)
+ *   - require-prior-idle-ms suppresses misfires during fast typing
+ *   - Bilateral enforcement via hold-trigger-key-positions
+ *   - hold-trigger-on-release for cleaner roll disambiguation
+ *
+ * Tuning tips:
+ *   Misfires mid-word    → increase require-prior-idle-ms (try 180-200)
+ *   Holds feel sluggish  → decrease tapping-term-ms (try -20ms on index)
+ *   Key repeat broken    → adjust quick-tap-ms
+ *   Accidental GUI fires → increase pinky require-prior-idle-ms (try 250)
  */
 
 #include <behaviors.dtsi>
@@ -12,136 +37,381 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/rgb.h>
 
-#define BASE    0
-#define SYM     1
-#define MAGIC   2
-#define GAME    3
+// ── Layer indices ──────────────────────────────────────────────────────────
+#define BASE  0
+#define SYM   1
+#define GAME  2
+#define MAGIC 3
+
+// ── Key position groups for bilateral HRM enforcement ─────────────────────
+// Glove80 matrix (80 keys):
+//   Row0  (F-keys):        0– 4  left  │  5– 9  right
+//   Row1  (numbers):      10–15  left  │ 16–21  right
+//   Row2  (top alpha):    22–27  left  │ 28–33  right
+//   Row3  (home row):     34–39  left  │ 40–45  right
+//   Row4  (bottom+mods):  46–51  left alpha
+//                         52–54  left inner thumb
+//                         55–57  right inner thumb
+//                         58–63  right alpha
+//   Row5  (nav+thumb):    64–68  left nav
+//                         69–71  left outer thumb arc
+//                         72–74  right outer thumb arc
+//                         75–79  right nav
+
+#define LKEYS \
+     0  1  2  3  4 \
+    10 11 12 13 14 15 \
+    22 23 24 25 26 27 \
+    34 35 36 37 38 39 \
+    46 47 48 49 50 51 \
+    52 53 54 \
+    64 65 66 67 68 \
+    69 70 71
+
+#define RKEYS \
+     5  6  7  8  9 \
+    16 17 18 19 20 21 \
+    28 29 30 31 32 33 \
+    40 41 42 43 44 45 \
+    55 56 57 \
+    58 59 60 61 62 63 \
+    72 73 74 \
+    75 76 77 78 79
+
+// ── Convenience: both thumb clusters (never block holds) ───────────────────
+#define TKEYS 52 53 54 55 56 57 69 70 71 72 73 74
 
 / {
+
+    // ════════════════════════════════════════════════════════════════════
+    // BEHAVIORS
+    // ════════════════════════════════════════════════════════════════════
     behaviors {
-        // Balanced flavor for RET-SYM layer-tap
-        st: sym_tap {
+
+        // ── Left hand home row mods ───────────────────────────────────
+
+        // Left pinky → LGUI (Super)
+        // Most generous timing: GUI triggers OS-level actions
+        lp: hrm_left_pinky {
             compatible = "zmk,behavior-hold-tap";
-            label = "SYM_TAP";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <200>;
+            hold-trigger-key-positions = <RKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Left ring → LALT
+        lr: hrm_left_ring {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <250>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <RKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Left middle → LCTRL
+        lm: hrm_left_middle {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <220>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <RKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Left index → LSHFT
+        // Fastest finger; shortest tapping term
+        li: hrm_left_index {
+            compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "balanced";
             tapping-term-ms = <200>;
-            quick-tap-ms = <150>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <RKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // ── Right hand home row mods ──────────────────────────────────
+
+        // Right index → RSHFT
+        ri: hrm_right_index {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <LKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Right middle → RCTRL
+        rm: hrm_right_middle {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <220>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <LKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Right ring → LALT
+        // Note: Use LALT (not RALT/AltGr) for modifier parity
+        rr: hrm_right_ring {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <250>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <150>;
+            hold-trigger-key-positions = <LKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // Right pinky → RGUI (Super)
+        rp: hrm_right_pinky {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            quick-tap-ms    = <175>;
+            require-prior-idle-ms = <200>;
+            hold-trigger-key-positions = <LKEYS TKEYS>;
+            hold-trigger-on-release;
+            bindings = <&kp>, <&kp>;
+        };
+
+        // ── Thumb layer-tap (for SYM layer access) ────────────────────
+        lt_sym: layer_tap_sym {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms    = <175>;
             bindings = <&mo>, <&kp>;
         };
 
-        // Magic key behavior
+        // ── Magic key ─────────────────────────────────────────────────
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
-            label = "MAGIC_HOLD_TAP";
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <200>;
             bindings = <&mo>, <&rgb_ug_status_macro>;
         };
 
-        // Caps Word: Toggle with a combo or dedicated key
-        // Stays on for ALPHA_CHARS, turns off on Space/Punctuation
+        // ── Caps Word ─────────────────────────────────────────────────
         caps_word: caps_word {
             compatible = "zmk,behavior-caps-word";
-            label = "CAPS_WORD";
             #binding-cells = <0>;
             continue-list = <UNDERSCORE MINUS BACKSPACE>;
         };
     };
 
+    // ════════════════════════════════════════════════════════════════════
+    // MACROS
+    // ════════════════════════════════════════════════════════════════════
     macros {
         rgb_ug_status_macro: rgb_ug_status_macro {
-            label = "RGB_UG_STATUS";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&rgb_ug RGB_STATUS>;
         };
-        
-        // Programming Macros
+
+        // =>  arrow function / fat arrow
         m_arrow: m_arrow {
-            label = "ARROW_FUNC";
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&kp EQUAL &kp GT>;
         };
-        
-        m_not_eq: m_not_eq {
-            label = "NOT_EQUAL";
+
+        // !=  not equal
+        m_neq: m_neq {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&kp EXCL &kp EQUAL>;
         };
-    };
 
-    combos {
-        compatible = "zmk,combos";
-        
-        // Fast JK Escape
-        combo_esc {
-            timeout-ms = <35>;
-            key-positions = <41 42>; 
-            bindings = <&kp ESC>;
-            layers = <BASE>;
+        // ->  thin arrow (Rust, C, PHP)
+        m_thin: m_thin {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp MINUS &kp GT>;
         };
 
-        // Caps Word Toggle (Left Shift + Right Shift)
+        // ::  double colon (Rust, C++)
+        m_dcolon: m_dcolon {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp COLON &kp COLON>;
+        };
+    };
+
+    // ════════════════════════════════════════════════════════════════════
+    // COMBOS
+    // ════════════════════════════════════════════════════════════════════
+    combos {
+        compatible = "zmk,combos";
+
+        // Both shift keys simultaneously → Caps Word
+        // Left shift = position 46 (outer left row4), Right shift = position 63
+        // (Verify these against your matrix if caps_word misfires)
         combo_caps_word {
             timeout-ms = <50>;
-            key-positions = <52 57>; // LSHFT and RSHFT positions
+            key-positions = <46 63>;
             bindings = <&caps_word>;
         };
     };
 
+    // ════════════════════════════════════════════════════════════════════
+    // KEYMAP
+    // ════════════════════════════════════════════════════════════════════
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
-            display-name = "Base";
+        // ════════════════════════════════════════════════════════════
+        // LAYER 0 — BASE (Graphite + HRMs)
+        // ════════════════════════════════════════════════════════════
+        //
+        // ┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
+        // │  F1  │  F2  │  F3  │  F4  │  F5  │   │  F6  │  F7  │  F8  │  F9  │ F10  │
+        // ├──────┼──────┼──────┼──────┼──────┼───┼──────┼──────┼──────┼──────┼──────┼──────┤
+        // │  =   │  1   │  2   │  3   │  4   │ 5 │  6   │  7   │  8   │  9   │  0   │  -   │
+        // ├──────┼──────┼──────┼──────┼──────┼───┼──────┼──────┼──────┼──────┼──────┼──────┤
+        // │ TAB  │  b   │  l   │  d   │  w   │ z │  '   │  f   │  o   │  u   │  j   │  ;   │
+        // ├──────┼──────┼──────┼──────┼──────┼───┼──────┼──────┼──────┼──────┼──────┼──────┤
+        // │ ESC  │N/GUI │R/Alt │S/Ctl │T/Sft │ g │  y   │H/Sft │E/Ctl │A/Alt │I/GUI │  ,   │
+        // ├──────┼──────┼──────┼──────┼──────┼───┼──────┼──────┼──────┼──────┼──────┼──────┤
+        // │ LSFT │  q   │  x   │  m   │  c   │ v │CTL│ALT│GUI│  │GUI│ALT│CTL│  k   │  p   │  .   │  -   │  /   │ PGUP │
+        // └──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┴──────┘
+        //        ┌────────────────────────────────────────────────────────────────────┐
+        //        │MAGIC│HOME│ END│ ← │ → │SYM⇥│ SPC │ ESC │  DEL │ BSP │SYM↵│ ↑ │ ↓ │ [ │ ] │PGDN│
+        //        └────────────────────────────────────────────────────────────────────┘
+        base_layer {
+            display-name = "Graphite";
             bindings = <
-            &kp F1          &kp F2      &kp F3      &kp F4      &kp F5                                                                                                          &kp F6      &kp F7      &kp F8      &kp F9      &kp F10
-            &kp EQUAL       &kp N1      &kp N2      &kp N3      &kp N4      &kp N5                                                                                              &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
-            &kp TAB         &kp Q       &kp W       &kp E       &kp R       &kp T                                                                                               &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BSLH
-            &kp ESC         &kp A       &kp S       &kp D       &kp F       &kp G                                                                                               &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
-            &kp LSHIFT       &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LCTRL   &kp LALT    &kp LGUI            &kp RGUI    &kp RALT    &kp RCTRL           &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
-            
-            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &st SYM SPACE   &kp LSHFT   &kp ESC           &kp DEL   &kp BSPC    &st SYM RET                      &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
+            // ╭──── Row 0: F-keys (5L + 5R) ────────────────────────────────────────────────────────────────────────╮
+               &kp F1          &kp F2          &kp F3          &kp F4          &kp F5                                                                                          &kp F6          &kp F7          &kp F8          &kp F9          &kp F10
+            // ╭──── Row 1: Number row (6L + 6R) ────────────────────────────────────────────────────────────────────╮
+               &kp EQUAL       &kp N1          &kp N2          &kp N3          &kp N4          &kp N5                                                                          &kp N6          &kp N7          &kp N8          &kp N9          &kp N0          &kp MINUS
+            // ╭──── Row 2: Top alpha (6L + 6R) ─────────────────────────────────────────────────────────────────────╮
+            //  [TAB]           b               l               d               w               z                      '               f               o               u               j              [;]
+               &kp TAB         &kp B           &kp L           &kp D           &kp W           &kp Z                                                                           &kp SQT         &kp F           &kp O           &kp U           &kp J           &kp SEMI
+            // ╭──── Row 3: Home row with HRMs (6L + 6R) ────────────────────────────────────────────────────────────╮
+            //  [ESC]          N/GUI           R/Alt          S/Ctrl          T/Shift           g                      y             H/Shift         E/Ctrl           A/Alt           I/GUI          [,]
+               &kp ESC         &lp LGUI N      &lr LALT R      &lm LCTRL S     &li LSFT T      &kp G                                                                           &kp Y           &ri RSFT H      &rm RCTRL E     &rr LALT A      &rp RGUI I      &kp COMMA
+            // ╭──── Row 4: Bottom alpha + inner mods (6L + 3 inner + 3 inner + 6R) ──────────────────────────────────╮
+            // [LSFT]           q               x               m               c               v          LCTRL  LALT  LGUI    RGUI  RALT  RCTRL    k               p               .               -               /              [PGUP]
+               &kp LSHFT       &kp Q           &kp X           &kp M           &kp C           &kp V       &kp LCTRL &kp LALT &kp LGUI                &kp RGUI &kp RALT &kp RCTRL  &kp K           &kp P           &kp DOT         &kp MINUS       &kp FSLH        &kp PG_UP
+            // ╭──── Row 5: Nav + thumb arcs (5L nav + 3L thumb + 3R thumb + 5R nav) ─────────────────────────────────╮
+            // MAGIC            HOME            END             LEFT            RIGHT           SYM/TAB  SPACE  ESC            DEL    BSP   SYM/RET           UP              DOWN            [               ]               PGDN
+               &magic MAGIC 0  &kp HOME        &kp END         &kp LEFT        &kp RIGHT                   &lt_sym SYM TAB  &kp SPACE  &kp ESC       &kp DEL  &kp BSPC  &lt_sym SYM RET                  &kp UP          &kp DOWN        &kp LBKT        &kp RBKT        &kp PG_DN
             >;
         };
 
+        // ════════════════════════════════════════════════════════════
+        // LAYER 1 — SYMBOL (Sunaku-inspired)
+        // ════════════════════════════════════════════════════════════
+        //
+        // Left hand:                   Right hand:
+        // ┌────┬────┬────┬────┬────┐   ┌────┬────┬────┬────┬────┐
+        // │    │    │    │    │    │   │    │    │    │    │    │
+        // ├────┼────┼────┼────┼────┤   ├────┼────┼────┼────┼────┤
+        // │ ~  │ !  │ @  │ {  │ }  │   │ \  │ *  │ +  │ =  │ `  │
+        // ├────┼────┼────┼────┼────┤   ├────┼────┼────┼────┼────┤
+        // │ $  │ %  │ ^  │ (  │ )  │   │ /  │ -  │ _  │ ;  │ :  │ "
+        // ├────┼────┼────┼────┼────┤   ├────┼────┼────┼────┼────┤
+        // │    │ &  │ => │ != │ |  │   │ [  │ ]  │ <  │ >  │ ?  │
+        // └────┴────┴────┴────┴────┘   └────┴────┴────┴────┴────┘
+        //
+        // Programming macros: => (fat arrow), != (not equal),
+        //                     -> (thin arrow on m_thin), :: (double colon)
         sym_layer {
-            display-name = "Sym";
+            display-name = "Symbol";
             bindings = <
-            &trans     &trans     &trans      &trans      &trans                                                                              &trans      &trans      &trans      &trans      &trans
-            &trans     &trans     &trans      &trans      &trans      &trans                                                                  &trans      &trans      &trans      &trans      &trans      &trans
-            &trans     &kp EXCL   &kp AT      &kp HASH    &kp GRAVE    &kp PRCNT                                                               &kp CARET   &kp AMPS    &kp STAR    &kp UNDER   &kp PLUS    &trans
-            &trans     &kp TILDE  &kp MINUS   &kp UNDER   &kp DLLR   &kp EQUAL                                                               &kp LBRC    &kp LPAR    &kp RPAR    &kp RBRC    &kp COLON   &kp DQT
-            &trans     &m_not_eq  &kp PIPE    &m_arrow    &kp BSLH    &trans      &trans      &trans      &trans      &trans      &trans      &trans      &kp LBKT    &kp RBKT    &kp LT      &kp GT      &kp QMARK   &trans
-            &trans     &trans     &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans      &trans                  &trans      &trans      &trans      &trans      &trans
+            // Row 0: all transparent
+               &trans          &trans          &trans          &trans          &trans                                                                                          &trans          &trans          &trans          &trans          &trans
+            // Row 1: all transparent
+               &trans          &trans          &trans          &trans          &trans          &trans                                                                          &trans          &trans          &trans          &trans          &trans          &trans
+            // Row 2: ~  !  @  {  }  │  \  *  +  =  `
+               &trans          &kp TILDE       &kp EXCL        &kp AT          &kp LBRC        &kp RBRC                                                                        &kp BSLH        &kp STAR        &kp PLUS        &kp EQUAL       &kp GRAVE       &trans
+            // Row 3: $  %  ^  (  )  │  /  -  _  ;  :  "
+               &trans          &kp DLLR        &kp PRCNT       &kp CARET       &kp LPAR        &kp RPAR                                                                        &kp FSLH        &kp MINUS       &kp UNDER       &kp SEMI        &kp COLON       &kp DQT
+            // Row 4:    &  =>  !=  |  │  [  ]  <  >  ?
+               &trans          &trans          &kp AMPS        &m_arrow        &m_neq          &kp PIPE    &trans    &trans    &trans              &trans    &trans    &trans    &kp LBKT        &kp RBKT        &kp LT          &kp GT          &kp QMARK       &trans
+            // Row 5: all transparent (thumbs stay as-is to exit layer)
+               &trans          &trans          &trans          &trans          &trans                      &trans    &trans    &trans              &trans    &trans    &trans                    &trans          &trans          &trans          &trans          &trans
             >;
         };
 
-        magic_layer {
-            display-name = "Magic";
-            bindings = <
-            &bt BT_CLR  &none            &none            &none            &none                                                                                                    &none      &none      &none      &none      &bt BT_CLR_ALL
-            &none       &none            &none            &none            &none            &none                                                                        &none      &none      &none      &none      &none      &none
-            &none       &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                              &none      &none      &none      &none      &none      &none
-            &bootloader &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                              &none      &none      &none      &none      &none      &bootloader
-            &sys_reset  &none            &none            &none            &none            &none            &bt BT_SEL 2  &bt BT_SEL 3  &none            &none  &none  &none  &none      &none      &none      &none      &none      &sys_reset
-            &none       &none            &none            &none            &none                             &bt BT_SEL 0  &bt BT_SEL 1  &out OUT_USB     &to BASE  &to GAME  &none      &none      &none      &none      &none      &none
-            >;
-        };
-
+        // ════════════════════════════════════════════════════════════
+        // LAYER 2 — GAME (Plain QWERTY)
+        // ════════════════════════════════════════════════════════════
+        //
+        // Zero hold-taps. Zero combos. Zero layer-taps.
+        // Every single key is a plain &kp — no timing, no ambiguity.
+        // Gaming input is never intercepted by the firmware.
+        //
+        // To return to Graphite: hold Magic → press the BASE key
+        // (the &to BASE binding in the Magic layer).
         game_layer {
             display-name = "Game";
             bindings = <
-            &kp F1          &kp F2      &kp F3      &kp F4      &kp F5                                                                                                          &kp F6      &kp F7      &kp F8      &kp F9      &kp F10
-            &kp EQUAL       &kp N1      &kp N2      &kp N3      &kp N4      &kp N5                                                                                              &kp N6      &kp N7      &kp N8      &kp N9      &kp N0      &kp MINUS
-            &kp TAB         &kp Q       &kp W       &kp E       &kp R       &kp T                                                                                               &kp Y       &kp U       &kp I       &kp O       &kp P       &kp BSLH
-            &kp ESC         &kp A       &kp S       &kp D       &kp F       &kp G                                                                                               &kp H       &kp J       &kp K       &kp L       &kp SEMI    &kp SQT
-            &kp LSHFT       &kp Z       &kp X       &kp C       &kp V       &kp B       &kp LCTRL   &kp LALT    &kp LGUI            &kp RGUI    &kp RALT    &kp RCTRL           &kp N       &kp M       &kp COMMA   &kp DOT     &kp FSLH    &kp PG_UP
-            &magic MAGIC 0  &kp HOME    &kp END     &kp LEFT    &kp RIGHT               &kp SPACE   &kp LSHFT   &kp LALT            &kp RCTRL   &kp BSPC    &kp RET                         &kp UP      &kp DOWN    &kp LBKT    &kp RBKT    &kp PG_DN
+            // Row 0
+               &kp F1          &kp F2          &kp F3          &kp F4          &kp F5                                                                                          &kp F6          &kp F7          &kp F8          &kp F9          &kp F10
+            // Row 1
+               &kp EQUAL       &kp N1          &kp N2          &kp N3          &kp N4          &kp N5                                                                          &kp N6          &kp N7          &kp N8          &kp N9          &kp N0          &kp MINUS
+            // Row 2
+               &kp TAB         &kp Q           &kp W           &kp E           &kp R           &kp T                                                                           &kp Y           &kp U           &kp I           &kp O           &kp P           &kp BSLH
+            // Row 3
+               &kp ESC         &kp A           &kp S           &kp D           &kp F           &kp G                                                                           &kp H           &kp J           &kp K           &kp L           &kp SEMI        &kp SQT
+            // Row 4
+               &kp LSHFT       &kp Z           &kp X           &kp C           &kp V           &kp B       &kp LCTRL &kp LALT  &kp LGUI            &kp RGUI  &kp RALT  &kp RCTRL  &kp N          &kp M           &kp COMMA       &kp DOT         &kp FSLH        &kp PG_UP
+            // Row 5 — plain keys only, magic key still accessible to switch back
+               &magic MAGIC 0  &kp HOME        &kp END         &kp LEFT        &kp RIGHT                   &kp SPACE &kp LSHFT &kp ESC             &kp DEL   &kp BSPC  &kp RET                   &kp UP          &kp DOWN        &kp LBKT        &kp RBKT        &kp PG_DN
+            >;
+        };
+
+        // ════════════════════════════════════════════════════════════
+        // LAYER 3 — MAGIC (Bluetooth / RGB / System)
+        // ════════════════════════════════════════════════════════════
+        //
+        // Bottom row thumb positions:
+        //   &to BASE  — switch back to Graphite layer
+        //   &to GAME  — switch to Game layer
+        magic_layer {
+            display-name = "Magic";
+            bindings = <
+            // Row 0
+               &bt BT_CLR      &none           &none           &none           &none                                                                                           &none           &none           &none           &none           &bt BT_CLR_ALL
+            // Row 1
+               &none           &none           &none           &none           &none           &none                                                                           &none           &none           &none           &none           &none           &none
+            // Row 2: RGB controls on left, empty right
+               &none           &rgb_ug RGB_SPI &rgb_ug RGB_SAI &rgb_ug RGB_HUI &rgb_ug RGB_BRI &rgb_ug RGB_TOG                                                                 &none           &none           &none           &none           &none           &none
+            // Row 3
+               &bootloader     &rgb_ug RGB_SPD &rgb_ug RGB_SAD &rgb_ug RGB_HUD &rgb_ug RGB_BRD &rgb_ug RGB_EFF                                                                 &none           &none           &none           &none           &none           &bootloader
+            // Row 4
+               &sys_reset      &none           &none           &none           &none           &none       &bt BT_SEL 2 &bt BT_SEL 3 &none           &none     &none     &none  &none           &none           &none           &none           &none           &sys_reset
+            // Row 5: BT profile selection + USB + layer switching
+               &none           &none           &none           &none           &none                       &bt BT_SEL 0 &bt BT_SEL 1 &out OUT_USB    &to BASE  &to GAME  &none                  &none           &none           &none           &none           &none
             >;
         };
     };
