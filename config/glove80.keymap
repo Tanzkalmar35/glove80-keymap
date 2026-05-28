@@ -3,7 +3,7 @@
  * ══════════════════════════════════════════════════════════════
  *
  * Layers:
- *   0 BASE  — Graphite layout with home row mods (GACS order)
+ *   0 BASE  — Graphite layout with home row mods (GACS order) EDIT - moved to qwerty for the time being
  *   1 SYM   — Sunaku-inspired symbol layer
  *   2 GAME  — Plain QWERTY, zero hold-taps or special behaviors
  *   3 MAGIC — Bluetooth / RGB / system control
@@ -302,14 +302,14 @@
             // ╭──── Row 1: Number row (6L + 6R) ────────────────────────────────────────────────────────────────────╮
                &kp EQUAL       &kp N1          &kp N2          &kp N3          &kp N4          &kp N5                                                                          &kp N6          &kp N7          &kp N8          &kp N9          &kp N0          &kp MINUS
             // ╭──── Row 2: Top alpha (6L + 6R) ─────────────────────────────────────────────────────────────────────╮
-            //  [TAB]           b               l               d               w               z                      '               f               o               u               j              [;]
-               &kp TAB         &kp B           &kp L           &kp D           &kp W           &kp Z                                                                           &kp SQT         &kp F           &kp O           &kp U           &kp J           &kp SEMI
+            //  [TAB]           q               w               e               r               T                                                                                y               u               i               o               p              \
+               &kp TAB         &kp Q           &kp W           &kp E           &kp R           &kp T                                                                           &kp Y         &kp U           &kp I           &kp O           &kp P           &kp BLSH
             // ╭──── Row 3: Home row with HRMs (6L + 6R) ────────────────────────────────────────────────────────────╮
-            //  [ESC]          N/GUI           R/Alt          S/Ctrl          T/Shift           g                      y             H/Shift         E/Ctrl           A/Alt           I/GUI          [,]
-               &kp ESC         &lp LGUI N      &lr LALT R      &lm LCTRL T     &li LSFT S      &kp G                                                                           &kp Y           &ri RSFT H      &rm RCTRL A     &rr LALT E      &rp RGUI I      &kp COMMA
+            //  [ESC]          A/GUI           S/Alt          D/Ctrl          F/Shift           g                                                                                h             j/Shift         k/Ctrl           L/Alt           ;/GUI          '
+               &kp ESC         &lp LGUI A      &lr LALT S      &lm LCTRL D     &li LSFT F      &kp G                                                                           &kp H           &ri RSFT J      &rm RCTRL K     &rr LALT L      &rp RGUI SEMI      &kp SQT
             // ╭──── Row 4: Bottom alpha + inner mods (6L + 3 inner + 3 inner + 6R) ──────────────────────────────────╮
-            // [LSFT]           q               x               m               c               v          LCTRL  LALT  LGUI    RGUI  RALT  RCTRL    k               p               .               -               /              [PGUP]
-               &kp LSHFT       &kp Q           &kp X           &kp M           &kp C           &kp V       &kp LCTRL &kp LALT &kp LGUI                &kp RGUI &kp RALT &kp RCTRL  &kp K           &kp P           &kp DOT         &kp MINUS       &kp FSLH        &kp PG_UP
+            // [LSFT]           z               x               c               v               b          LCTRL  LALT  LGUI    RGUI  RALT  RCTRL                                   n               M                ,              .               /              [PGUP]
+               &kp LSHFT       &kp Z           &kp X           &kp C           &kp V           &kp B       &kp LCTRL &kp LALT &kp LGUI                &kp RGUI &kp RALT &kp RCTRL  &kp N           &kp M           &kp COMMA         &kp DOT       &kp FSLH        &kp PG_UP
             // ╭──── Row 5: Nav + thumb arcs (5L nav + 3L thumb + 3R thumb + 5R nav) ─────────────────────────────────╮
             // MAGIC            HOME            END             LEFT            RIGHT           SYM/TAB  SPACE  ESC            DEL    BSP   SYM/RET           UP              DOWN            [               ]               PGDN
                &magic MAGIC 0  &kp HOME        &kp END         &kp LEFT        &kp RIGHT                   &kp SPACE  &lt_sym SYM TAB  &kp ESC       &kp DEL  &kp BSPC  &lt_sym SYM RET                  &kp UP          &kp DOWN        &kp LBKT        &kp RBKT        &kp PG_DN
